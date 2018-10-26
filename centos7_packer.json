@@ -1,0 +1,531 @@
+{
+  "variables":
+    {
+      "version"                           : "{{ user `version` }}",
+      "iso_checksum"                      : "xxxxxxxxxxxxxxxxx",
+      "aws_access_key"                    : "{{env `PACKER_AWS_ACCESS_KEY`}}",
+      "aws_secret_key"                    : "{{env `PACKER_AWS_SECRET_KEY`}}",
+      "root_pass"                         : "{{env `PACKER_ROOT_PASSWORD`}}",
+      "remote_esxi_username"              : "svc-packer",
+      "remote_esxi_password"              : "{{env `PACKER_SVC_PACKER_PASSWORD`}}",
+      "remote_esxi_datastore"             : "xxxxxxx-xxxxxxx-xxxxxxx-xxxxxxx-xxxxxxx-ONLY",
+      "vcenter_username"                  : "{{env `PACKER_VCENTER_USERNAME`}}",
+      "vcenter_password"                  : "{{env `PACKER_VCENTER_PASSWORD`}}",
+      "kms_key_id_acct1_us-west-1"          : "arn:aws:kms:us-west-1:xxxxxxx:key/xxxxxxx-xxxxxxx-xxxxxxx-xxxxxxx-xxxxxxx",
+      "kms_key_id_acct2_us-west-1"          : "arn:aws:kms:us-west-1:xxxxxxx:key/xxxxxxx-xxxxxxx-xxxxxxx-xxxxxxx-xxxxxxx",
+      "kms_key_id_acct2_us-east-1"          : "arn:aws:kms:us-east-1:xxxxxxx:key/xxxxxxx-xxxxxxx-xxxxxxx-xxxxxxx-xxxxxxx",
+      "kms_key_id_acct2_eu-west-2"          : "arn:aws:kms:eu-west-2:xxxxxxx:key/xxxxxxx-xxxxxxx-xxxxxxx-xxxxxxx-xxxxxxx",
+      "kms_key_id_acct2_eu-central-1"       : "arn:aws:kms:eu-central-1:xxxxxxx:key/xxxxxxx-xxxxxxx-xxxxxxx-xxxxxxx-xxxxxxx",
+      "kms_key_id_acct2_eu-west-3"          : "arn:aws:kms:eu-west-3:xxxxxxx:key/xxxxxxx-xxxxxxx-xxxxxxx-xxxxxxx-xxxxxxx",
+      "kms_key_id_acct3_us-west-2"      : "arn:aws:kms:us-west-2:xxxxxxx:key/xxxxxxx-xxxxxxx-xxxxxxx-xxxxxxx-xxxxxxx",
+      "kms_key_id_acct3_us-east-1"      : "arn:aws:kms:us-east-1:xxxxxxx:key/xxxxxxx-xxxxxxx-xxxxxxx-xxxxxxx-xxxxxxx"
+    },
+
+  "builders":[
+  {
+        "name"                 	: "aws",
+        "type"                 	: "amazon-ebs",
+        "access_key"           	: "{{user `aws_access_key`}}",
+        "secret_key"           	: "{{user `aws_secret_key`}}",
+        "region"               	: "{{user `aws_region`}}",
+        "instance_type"        	: "t2.xlarge",
+        "ssh_timeout"           : "10m",
+        "ssh_username"          : "myadmin",
+        "subnet_id"            	: "{{user `aws_subnet_id`}}",
+        "ami_name"             	: "xxxxxxxx-centos7-v{{ user `version` | clean_ami_name }}",
+        "ami_description"      	: "xxxxxxxx - CentOS 7 (Latest) - Build ({{timestamp}})",
+        "force_deregister"     	: false,
+        "tags": {
+          "OS": "CentOS 7.X" 
+        },
+        "source_ami_filter": {
+          "filters": {
+              "virtualization-type": "hvm",
+              "name": "xxxxxxxxcentos7-base-v1.01",
+              "root-device-type": "ebs"
+            },
+            "owners": ["xxxxxxx"],
+            "most_recent": true
+        },
+        "ami_block_device_mappings" : [
+          {
+            "device_name": "/dev/sdf",
+            "delete_on_termination": true,
+            "encrypted": true,
+            "volume_size": 50,
+            "volume_type": "gp2"
+          }
+        ],
+        "encrypt_boot"  : true
+  },
+  {
+        "name"                 	: "aws-acct1",
+        "type"                 	: "amazon-ebs",
+        "access_key"           	: "{{user `aws_access_key`}}",
+        "secret_key"           	: "{{user `aws_secret_key`}}",
+        "region"               	: "{{user `aws_region`}}",
+        "instance_type"        	: "t2.xlarge",
+        "ssh_timeout"           : "10m",
+        "ssh_username"          : "myadmin",
+        "subnet_id"            	: "{{user `aws_subnet_id`}}",
+        "ami_name"             	: "xxxxxxxxcentos7-v{{ user `version` | clean_ami_name }}",
+        "ami_description"      	: "xxxxxxxx - CentOS 7 (Latest) - Build ({{timestamp}})",
+        "force_deregister"     	: false,
+        "kms_key_id"            : "{{user `kms_key_id_acct1_us-west-1`}}",
+        "region_kms_key_ids"    : { 
+          "us-west-1"           : "{{user `kms_key_id_acct1_us-west-1`}}"
+        },
+        "tags": {
+          "OS": "CentOS 7.X",
+          "Type": "Latest",
+          "Version": "{{user `version`}}",
+          "Application": "TECHOPS_INxxxxxxSTRUCTURE",
+          "Environment": "INxxxxxxSTRUCTURE",
+          "xxxxxxxx_APP": "TECHOPS_INxxxxxxSTRUCTURE",
+          "APP_DOMAIN": "INxxxxxxSTRUCTURE"
+        },
+        "ami_regions"           : [
+          "us-west-1"
+        ],
+        "source_ami_filter": {
+          "filters": {
+              "virtualization-type": "hvm",
+              "name": "xxxxxxxxcentos7-base-v1.01",
+              "root-device-type": "ebs"
+            },
+            "owners": ["xxxxxxx"],
+            "most_recent": true
+        },
+        "ami_block_device_mappings" : [
+          {
+            "device_name": "/dev/sdf",
+            "delete_on_termination": true,
+            "encrypted": false,
+            "volume_size": 50,
+            "volume_type": "gp2"
+          }
+        ],
+        "encrypt_boot"  : true,
+        "skip_region_validation" : true
+  },
+  {
+        "name"                 	: "aws-acct2",
+        "type"                 	: "amazon-ebs",
+        "access_key"           	: "{{user `aws_access_key`}}",
+        "secret_key"           	: "{{user `aws_secret_key`}}",
+        "region"               	: "{{user `aws_region`}}",
+        "instance_type"        	: "t2.xlarge",
+        "ssh_timeout"           : "10m",
+        "ssh_username"          : "myadmin",
+        "subnet_id"            	: "{{user `aws_subnet_id`}}",
+        "ami_name"             	: "xxxxxxxxcentos7-v{{ user `version` | clean_ami_name }}",
+        "ami_description"      	: "xxxxxxxx - CentOS 7 (Latest) - Build ({{timestamp}})",
+        "force_deregister"     	: false,
+        "kms_key_id"            : "{{user `kms_key_id_acct2_us-west-1`}}",
+        "region_kms_key_ids"    : {
+          "us-west-1"           : "{{user `kms_key_id_acct2_us-west-1`}}",
+          "us-east-1"           : "{{user `kms_key_id_acct2_us-east-1`}}",
+          "eu-west-2"           : "{{user `kms_key_id_acct2_eu-west-2`}}",
+          "eu-central-1"        : "{{user `kms_key_id_acct2_eu-central-1`}}",
+          "eu-west-3"           : "{{user `kms_key_id_acct2_eu-west-3`}}"
+        },
+        "tags": {
+          "OS": "CentOS 7.X" 
+        },
+        "ami_regions"           : [
+          "us-west-1",
+          "us-east-1",
+          "eu-west-2",
+          "eu-central-1",
+          "eu-west-3"
+        ],
+        "source_ami_filter": {
+          "filters": {
+              "virtualization-type": "hvm",
+              "name": "xxxxxxxxcentos7-base-v1.01",
+              "root-device-type": "ebs"
+            },
+            "owners": ["xxxxxxx"],
+            "most_recent": true
+        },
+        "ami_block_device_mappings" : [
+          {
+            "device_name": "/dev/sdf",
+            "delete_on_termination": true,
+            "encrypted": true,
+            "volume_size": 50,
+            "volume_type": "gp2"
+          }
+        ],
+        "encrypt_boot"  : true,
+        "skip_region_validation" : true
+    },
+    {
+        "name"                    : "aws-acct3",
+        "type"                    : "amazon-ebs",
+        "access_key"              : "{{user `aws_access_key`}}",
+        "secret_key"              : "{{user `aws_secret_key`}}",
+        "region"                  : "{{user `aws_region`}}",
+        "instance_type"           : "t2.xlarge",
+        "ssh_timeout"             : "10m",
+        "ssh_username"            : "myadmin",
+        "subnet_id"               : "{{user `aws_subnet_id`}}",
+        "ami_name"                : "xxxxxxxxcentos7-v{{ user `version` | clean_ami_name }}",
+        "ami_description"         : "xxxxxxxx - CentOS 7 (Latest) - Build ({{timestamp}})",
+        "force_deregister"        : false,
+        "kms_key_id"              : "{{user `kms_key_id_acct3_us-west-2`}}",
+        "region_kms_key_ids"      : {
+          "us-west-2"             : "{{user `kms_key_id_acct3_us-west-2`}}",
+          "us-east-1"             : "{{user `kms_key_id_acct3_us-east-1`}}"
+        },
+        "tags": {
+          "OS": "CentOS 7.X",
+          "Type": "Latest",
+          "Version": "{{user `version`}}",
+          "Application": "TECHOPS_INxxxxxxSTRUCTURE",
+          "Environment": "INxxxxxxSTRUCTURE",
+          "xxxxxxxx_APP": "TECHOPS_INxxxxxxSTRUCTURE",
+          "APP_DOMAIN": "INxxxxxxSTRUCTURE"
+        },
+        "ami_regions"           : [
+          "us-west-2",
+          "us-east-1"
+        ],
+        "source_ami_filter": {
+          "filters": {
+              "virtualization-type": "hvm",
+              "name": "xxxxxxxxcentos7-base-v1.01",
+              "root-device-type": "ebs"
+            },
+            "owners": ["xxxxxxx"],
+            "most_recent": true
+        },
+        "ami_block_device_mappings" : [
+          {
+            "device_name": "/dev/sdf",
+            "delete_on_termination": true,
+            "encrypted": true,
+            "volume_size": 50,
+            "volume_type": "gp2"
+          }
+        ],
+        "encrypt_boot"  : true,
+        "skip_region_validation" : true
+    },
+    {
+        "name"                        : "vmware",
+        "vm_name"                     : "xxxxxxxxcentos7-v{{user `version` }}",
+        "type"                        : "vmware-iso",
+        "headless"                    : "false",
+        "iso_urls": [
+          "CentOS-7-x86_64-Minimal-1708.iso",
+          "http://mirrors.ocf.berkeley.edu/centos/7/isos/x86_64/CentOS-7-x86_64-Minimal-1708.iso"
+        ],
+        "iso_checksum_type"           : "none",
+        "iso_checksum"                : "{{ user `iso_checksum` }}",
+        "communicator"                : "ssh",
+        "ssh_host"                    : "xxx.xxx.xxx.xxx",
+        "ssh_username"                : "root",
+        "ssh_password"                : "{{ user `root_pass` }}",
+        "vnc_port_min"                : "5900",
+        "vnc_port_max"                : "6000",
+        "vnc_disable_password"        : true,
+        "remote_type"                 : "esx5",
+        "remote_host"                 : "xxx.xxx.xxx.xxx",
+        "remote_username"             : "{{ user `remote_esxi_username` }}",
+        "remote_password"             : "{{ user `remote_esxi_password` }}",
+        "remote_datastore"            : "{{ user `remote_esxi_datastore` }}",
+        "format"                      : "ovf",
+        "ssh_port"                    : "22",
+        "ssh_timeout"                 : "15m",
+        "floppy_files"                : [
+          "./scripts/kickstart/ks.cfg"
+        ],
+        "boot_comxxxxxxd"                : "<tab> inst.tacct2 inst.ks=hd:fd0:/ks.cfg <enter><wait>",
+        "guest_os_type"               : "centos-64",
+        "output_directory"            : "xxxxxxxxcentos7",
+        "disk_type_id"                : "thin",
+        "disk_size"                   : 66560,
+        "disk_additional_size"        : [51200],
+        "keep_registered"             : false,
+        "skip_export"                 : false,
+        "shutdown_comxxxxxxd"            : "shutdown -P now",
+        "shutdown_timeout"            : "15m",
+        "vmdk_name"                   : "xxxxxxxxcentos7",
+        "tools_upload_flavor"         : "linux",
+        "version"                     : "11",
+        "vmx_data"                    : {
+          "numvcpus"                  : "4",
+          "memSize"                   : "8192",
+          "ethernet0.startConnected"  : "true",
+          "ethernet0.dvs.switchId"    : "50 1d 18 c9 65 4d e7 e5-10 06 21 15 cb 76 8c b8",
+          "ethernet0.dvs.portgroupId" : "xxxxxx-xx",
+          "ethernet0.virtualdev"      : "vmxnet3",
+          "annotation"                : "Built by Packer on epoch time {{timestamp}}"
+        },
+        "vmx_data_post"                    : {
+          "numvcpus"                  : "2",
+          "memSize"                   : "2048",
+          "ethernet0.virtualdev"      : "vmxnet3",
+          "vcpu.hotadd"               : "true",
+          "mem.hotadd"                : "true"
+        }
+    }
+  ],
+  "provisioners": [
+    {
+      "type": "ansible-local",
+      "playbook_dir": "./scripts/",
+      "playbook_file": "./scripts/centos7.yaml"
+    },
+    {
+      "type": "ansible-local",
+      "only": ["aws","aws-acct1","aws-acct2","aws-acct3"],
+      "playbook_dir": "./scripts/",
+      "playbook_file": "./scripts/aws.yaml"
+    },
+    {
+      "type": "ansible-local",
+      "only": ["vmware"],
+      "playbook_dir": "./scripts/",
+      "playbook_file": "./scripts/users.yaml"
+    },
+    {
+      "type": "ansible",
+      "only": ["vmware"],
+      "playbook_file": "./scripts/network.yaml"
+    },
+    {
+      "type":  "shell",
+      "execute_comxxxxxxd": "sudo {{ .Path }}",
+      "script": "./scripts/cleanup.sh"
+    }
+  ],
+
+  "post-processors":   [
+      [
+        {
+          "type": "vsphere",
+          "only": ["vmware"],
+          "xxxxxxx": "xxxxxxx-xxxxxx.xxxxxx.xxxxxx",
+          "username": "{{ user `vcenter_username`}}",
+          "password": "{{ user `vcenter_password`}}",
+          "datacenter": "xxxxxxx",
+          "disk_mode": "thin",
+          "cluster": "xxxxxxx-SS-Temp",
+          "datastore": "xxxxxxx-Pure-001_vSphere-Templates",
+          "vm_name": "Production-CentOS-7-Beta",
+          "vm_folder": "Production Templates",
+          "vm_network": "xxxxxxv_xxxxxxxx_MGMT",
+          "overwrite": true,
+          "insecure": true
+        },
+        {
+          "type": "vsphere-template",
+          "only": ["vmware"],
+          "xxxxxxx": "xxxxxxx-xxxxxx.xxxxxx.xxxxxx",
+          "username": "{{ user `vcenter_username`}}",
+          "password": "{{ user `vcenter_password`}}",
+          "datacenter": "xxxxxxx",
+          "folder": "/Production Templates",
+          "insecure": true
+        }
+      ],
+      [
+        {
+          "type": "vsphere",
+          "only": ["vmware"],
+          "xxxxxxx": "xxxxxxx-xxxxxx-xxxxxx.xxxxxx.xxxxxx",
+          "username": "{{ user `vcenter_username`}}",
+          "password": "{{ user `vcenter_password`}}",
+          "datacenter": "xxxxxxx",
+          "disk_mode": "thin",
+          "cluster": "xxxxxxx-xxxxxx",
+          "datastore": "xxxxxxx-xxxxxx",
+          "vm_name": "Production-CentOS-7-Beta",
+          "vm_folder": "Production Templates",
+          "vm_network": "xxxxxx",
+          "overwrite": true,
+          "insecure": true
+        },
+        {
+          "type": "vsphere-template",
+          "only": ["vmware"],
+          "xxxxxxx": "xxxxxxx-xxxxxx-xxxxxx.xxxxxx.xxxxxx",
+          "username": "{{ user `vcenter_username`}}",
+          "password": "{{ user `vcenter_password`}}",
+          "datacenter": "xxxxxxx",
+          "folder": "/Production Templates",
+          "insecure": true
+        }
+      ],
+      [
+        {
+          "type": "vsphere",
+          "only": ["vmware"],
+          "xxxxxxx": "xxxxxx-xxxxxx-xxxxxx.xxxxxx.xxxxxx",
+          "username": "{{ user `vcenter_username`}}",
+          "password": "{{ user `vcenter_password`}}",
+          "datacenter": "xxxxxx",
+          "disk_mode": "thin",
+          "cluster": "xxxxxx-xxxxxx",
+          "datastore": "xxxxxx-xxxxxx",
+          "vm_name": "Production-CentOS-7-Beta",
+          "vm_folder": "Production Templates",
+          "vm_network": "xxxxxx",
+          "overwrite": true,
+          "insecure": true
+        },
+        {
+          "type": "vsphere-template",
+          "only": ["vmware"],
+          "xxxxxxx": "xxxxxx-xxxxxx-xxxxxx.xxxxxx.xxxxxx",
+          "username": "{{ user `vcenter_username`}}",
+          "password": "{{ user `vcenter_password`}}",
+          "datacenter": "xxxxxx",
+          "folder": "/Production Templates",
+          "insecure": true
+        }
+      ],
+      [
+        {
+          "type": "vsphere",
+          "only": ["vmware"],
+          "xxxxxxx": "xxxxxx-xxxxxx.xxxxxx.xxxxxx",
+          "username": "{{ user `vcenter_username`}}",
+          "password": "{{ user `vcenter_password`}}",
+          "datacenter": "xxxxxx",
+          "disk_mode": "thin",
+          "cluster": "xxxxxx-xxxxxxx",
+          "datastore": "xxxxxx-Puressd",
+          "vm_name": "Production-CentOS-7-Beta",
+          "vm_folder": "Production Templates",
+          "vm_network": "xxxxxx-xxxxxxxxMGMT-xxxxxxv",
+          "overwrite": true,
+          "insecure": true
+        },
+        {
+          "type": "vsphere-template",
+          "only": ["vmware"],
+          "xxxxxxx": "xxxxxx-xxxxxx.xxxxxx.xxxxxx",
+          "username": "{{ user `vcenter_username`}}",
+          "password": "{{ user `vcenter_password`}}",
+          "datacenter": "xxxxxx",
+          "folder": "/Production Templates",
+          "insecure": true
+        }
+      ],
+      [
+        {
+          "type": "vsphere",
+          "only": ["vmware"],
+          "xxxxxxx": "xxxxxx-xxxxxx-xxxxxx.xxxxxx.xxxxxx",
+          "username": "{{ user `vcenter_username`}}",
+          "password": "{{ user `vcenter_password`}}",
+          "datacenter": "xxxxxx",
+          "disk_mode": "thin",
+          "cluster": "xxxxxx-xxxxxx",
+          "datastore": "xxxxxx-xxxxxx",
+          "vm_name": "Production-CentOS-7-Beta",
+          "vm_folder": "Production Templates",
+          "vm_network": "xxxxxx",
+          "overwrite": true,
+          "insecure": true
+        },
+        {
+          "type": "vsphere-template",
+          "only": ["vmware"],
+          "xxxxxxx": "xxxxxx-xxxxxx-xxxxxx.xxxxxx.xxxxxx",
+          "username": "{{ user `vcenter_username`}}",
+          "password": "{{ user `vcenter_password`}}",
+          "datacenter": "xxxxxx",
+          "folder": "/Production Templates",
+          "insecure": true
+        }
+      ],
+      [
+        {
+          "type": "vsphere",
+          "only": ["vmware"],
+          "xxxxxxx": "xxxxxx-xxxxxx-xxxxxx.xxxxxx.xxxxxx",
+          "username": "{{ user `vcenter_username`}}",
+          "password": "{{ user `vcenter_password`}}",
+          "datacenter": "xxxxxx",
+          "disk_mode": "thin",
+          "cluster": "xxxxxx-xxxxxx",
+          "datastore": "xxxxxx xxxxxx",
+          "vm_name": "Production-CentOS-7-Beta",
+          "vm_folder": "Production Templates",
+          "vm_network": "xxxxxx",
+          "overwrite": true,
+          "insecure": true
+        },
+        {
+          "type": "vsphere-template",
+          "only": ["vmware"],
+          "xxxxxxx": "xxxxxx-xxxxxx-xxxxxx.xxxxxx.xxxxxx",
+          "username": "{{ user `vcenter_username`}}",
+          "password": "{{ user `vcenter_password`}}",
+          "datacenter": "xxxxxx",
+          "folder": "/Production Templates",
+          "insecure": true
+        }
+      ],
+      [
+        {
+          "type": "vsphere",
+          "only": ["vmware"],
+          "xxxxxxx": "xxxxxx-xxxxxx-xxxxxx.xxxxxx.xxxxxx",
+          "username": "{{ user `vcenter_username`}}",
+          "password": "{{ user `vcenter_password`}}",
+          "datacenter": "xxxxxx",
+          "disk_mode": "thin",
+          "cluster": "xxxxxx-xxxxxx",
+          "datastore": "xxxxxx-xxxxxx",
+          "vm_name": "Production-CentOS-7-Beta",
+          "vm_folder": "Production Templates",
+          "vm_network": "1650",
+          "overwrite": true,
+          "insecure": true
+        },
+        {
+          "type": "vsphere-template",
+          "only": ["vmware"],
+          "xxxxxxx": "xxxxxx-xxxxxx-xxxxxx.xxxxxx.xxxxxx",
+          "username": "{{ user `vcenter_username`}}",
+          "password": "{{ user `vcenter_password`}}",
+          "datacenter": "xxxxxx",
+          "folder": "/Production Templates",
+          "insecure": true
+        }
+      ],
+      [
+        {
+          "type": "vsphere",
+          "only": ["vmware"],
+          "xxxxxxx": "xxxxxx-xxxxxx-xxxxxx.xxxxxx.xxxxxx",
+          "username": "{{ user `vcenter_username`}}",
+          "password": "{{ user `vcenter_password`}}",
+          "datacenter": "xxxxxx",
+          "disk_mode": "thin",
+          "cluster": "xxxxxx-xxxxxx",
+          "datastore": "xxxxxx-xxxxxx",
+          "vm_name": "Production-CentOS-7-Beta",
+          "vm_folder": "Production Templates",
+          "vm_network": "1650",
+          "overwrite": true,
+          "insecure": true
+        },
+        {
+          "type": "vsphere-template",
+          "only": ["vmware"],
+          "xxxxxxx": "xxxxxx-xxxxxx-xxxxxx.xxxxxx.xxxxxx",
+          "username": "{{ user `vcenter_username`}}",
+          "password": "{{ user `vcenter_password`}}",
+          "datacenter": "xxxxxx",
+          "folder": "/Production Templates",
+          "insecure": true
+        }
+      ]
+   ]
+}
