@@ -1,0 +1,602 @@
+{
+  "variables":
+    {
+      "sysprep_version"                   : "{{ user `sysprep_version` }}",
+      "web_version"                       : "{{ user `web_version` }}",
+      "iso_url"                           : "/iso/SW_DVD9_Windows_Svr_Std_and_DataCtr_2012_R2_64Bit_English_-4_MLF_X19-82891.ISO",
+      "iso_checksum"                      : "xxxxxxxxxxxxxxxxxxxxxxxxxxx",
+      "remote_esxi_username"              : "svc-packer",
+      "remote_esxi_password"              : "{{env `PACKER_SVC_PACKER_PASSWORD`}}",
+      "remote_esxi_datastore"             : "xxxxxxxxxxxxxxxxxxxxx",
+      "admin_pass"                        : "{{env `PACKER_ADMIN_PASS`}}",
+      "vcenter_username"                  : "{{env `PACKER_VCENTER_USERNAME`}}",
+      "vcenter_password"                  : "{{env `PACKER_VCENTER_PASSWORD`}}",
+      "kms_key_id_acct1_us-west-1"          : "arn:aws:kms:us-west-1:xxxxxxxxxxxxxx:key/xxxxxxxx-axxxx-4xxxx-axxxxx-dxxxxxxx",
+      "kms_key_id_acct2_us-west-1"          : "arn:aws:kms:us-west-1:xxxxxxxxxxxxxx:key/xxxxx-xxxxxx-xxxx-xxxxxx-xxxxxxxxx",
+      "kms_key_id_acct2_us-east-1"          : "arn:aws:kms:us-east-1:xxxxxxxxxxxxxx:key/xxxxx-xxxxx-xxxxx-xxxxx-xxxxxxxxxxx",
+      "kms_key_id_acct2_eu-west-2"          : "arn:aws:kms:eu-west-2:xxxxxxxxxxxxxx:key/xxxxx-1axx-xxx-xx-xxxxxxxx",
+      "kms_key_id_acct2_eu-central-1"       : "arn:aws:kms:eu-central-1:xxxxxxxxxxxxxx:key/xxxerwe-xxx-xxx-xx-xxxxxxxx",
+      "kms_key_id_acct2_eu-west-3"          : "arn:aws:kms:eu-west-3:xxxxxxxxxxxxxx:key/xxxx-x-4cxxx-9xxxxx-xxxxxxxxxx",
+      "kms_key_id_acct3_us-west-2"      : "arn:aws:kms:us-west-2:xxxxxxxxxxxxxx:key/xxxxx-xx-xxx-bxxxxx-xxxxxxxxx",
+      "kms_key_id_acct3_us-east-1"      : "arn:aws:kms:us-east-1:xxxxxxxxxxxxxx:key/xxxxx-xxx-xxxxx-8xxxf7-xxxxxxxxxx"
+    },
+
+  "builders":
+  [
+    {
+      "name"                 	      : "aws-acct1",
+      "type"                 	      : "amazon-ebs",
+      "access_key"           	      : "{{ user `aws_access_key` }}",
+      "secret_key"           	      : "{{ user `aws_secret_key` }}",
+      "region"               	      : "{{ user `aws_region` }}",
+      "instance_type"        	      : "t2.xlarge",
+      "communicator"                : "winrm",
+      "winrm_username"              : "Administrator",
+      "winrm_password"              : "{{ user `admin_pass` }}",
+      "winrm_use_ssl"               : true,
+      "winrm_insecure"              : true,
+      "subnet_id"            	      : "{{ user `aws_subnet_id` }}",
+      "ami_name"             	      : "xxxxxxxxxxxxxx-win2012r2-sysprep-v{{user `sysprep_version`}}",
+      "ami_description"      	      : "xxxxxxxxxxxxxx - Windows 2012 R2 (Sysprepped) - Build v{{user `sysprep_version`}} - ({{timestamp}})",
+      "force_deregister"     	      : false,
+      "kms_key_id"                  : "{{user `kms_key_id_acct1_us-west-1`}}",
+      "region_kms_key_ids"          : { 
+              "us-west-1"           : "{{user `kms_key_id_acct1_us-west-1`}}"
+      },
+      "tags": {
+        "OS": "Windows 2012 R2"
+      },
+      "ami_regions"           : [
+        "us-west-1"
+      ],
+      "source_ami_filter": {
+        "filters": {
+            "virtualization-type": "hvm",
+            "name": "xxxxxxxxxxxxxx-win2012r2-base",
+            "root-device-type": "ebs"
+          },
+          "owners": ["xxxxxxxxxxxxxx"],
+          "most_recent": true
+      },
+      "encrypt_boot"                : true,
+      "skip_region_validation"      : true
+    },
+    {
+      "name"                 	      : "aws-acct2",
+      "type"                 	      : "amazon-ebs",
+      "access_key"           	      : "{{ user `aws_access_key` }}",
+      "secret_key"           	      : "{{ user `aws_secret_key` }}",
+      "region"               	      : "{{ user `aws_region` }}",
+      "instance_type"        	      : "t2.xlarge",
+      "communicator"                : "winrm",
+      "winrm_username"              : "Administrator",
+      "winrm_password"              : "{{ user `admin_pass` }}",
+      "winrm_use_ssl"               : true,
+      "winrm_insecure"              : true,
+      "subnet_id"            	      : "{{ user `aws_subnet_id` }}",
+      "ami_name"             	      : "xxxxxxxxxxxxxx-win2012r2-sysprep-v{{user `sysprep_version`}}",
+      "ami_description"      	      : "xxxxxxxxxxxxxx - Windows 2012 R2 (Sysprepped) - Build v{{user `sysprep_version`}} - ({{timestamp}})",
+      "force_deregister"     	      : false,
+      "kms_key_id"                  : "{{user `kms_key_id_acct2_us-west-1`}}",
+      "region_kms_key_ids"          : {
+              "us-west-1"           : "{{user `kms_key_id_acct2_us-west-1`}}",
+              "us-east-1"           : "{{user `kms_key_id_acct2_us-east-1`}}",
+              "eu-west-2"           : "{{user `kms_key_id_acct2_eu-west-2`}}",
+              "eu-central-1"        : "{{user `kms_key_id_acct2_eu-central-1`}}",
+              "eu-west-3"           : "{{user `kms_key_id_acct2_eu-west-3`}}"
+      },
+      "tags": {
+        "OS": "Windows 2012 R2" 
+      },
+      "ami_regions"                 : [
+        "us-west-1",
+        "us-east-1",
+        "eu-west-2",
+        "eu-central-1",
+        "eu-west-3"
+      ],
+      "source_ami_filter"           : {
+        "filters": {
+            "virtualization-type"   : "hvm",
+            "name"                  : "xxxxxxxxxxxxxx-win2012r2-base",
+            "root-device-type"      : "ebs"
+          },
+          "owners": ["xxxxxxxxxxxxxx"],
+          "most_recent": true
+      },
+      "ami_block_device_mappings"   : [
+        {
+          "device_name": "xvdb",
+          "delete_on_termination": true,
+          "encrypted": true,
+          "volume_size": 30,
+          "volume_type": "gp2"
+        },
+        {
+          "device_name": "xvdc",
+          "delete_on_termination": true,
+          "encrypted": true,
+          "volume_size": 8,
+          "volume_type": "gp2"
+        },
+        {
+              "device_name"          : "xvdd",
+              "delete_on_termination": true,
+              "encrypted"            : true,
+              "volume_size"          : 50,
+              "volume_type"          : "gp2"
+        }
+      ],
+      "encrypt_boot"                : true,
+      "skip_region_validation"      : true
+    },
+    {
+      "name"                 	      : "aws-acct3",
+      "type"                 	      : "amazon-ebs",
+      "access_key"           	      : "{{ user `aws_access_key` }}",
+      "secret_key"           	      : "{{ user `aws_secret_key` }}",
+      "region"               	      : "{{ user `aws_region` }}",
+      "instance_type"        	      : "t2.xlarge",
+      "communicator"                : "winrm",
+      "winrm_username"              : "Administrator",
+      "winrm_password"              : "{{ user `admin_pass` }}",
+      "winrm_use_ssl"               : true,
+      "winrm_insecure"              : true,
+      "subnet_id"            	      : "{{ user `aws_subnet_id` }}",
+      "ami_name"             	      : "xxxxxxxxxxxxxx-win2012r2-sysprep-v{{user `sysprep_version`}}",
+      "ami_description"      	      : "xxxxxxxxxxxxxx - Windows 2012 R2 (Sysprepped) - Build v{{user `sysprep_version`}} - ({{timestamp}})",
+      "force_deregister"     	      : false,
+      "kms_key_id"                  : "{{user `kms_key_id_acct3_us-west-2`}}",
+      "region_kms_key_ids"          : {
+              "us-west-2"           : "{{user `kms_key_id_acct3_us-west-2`}}",
+              "us-east-1"           : "{{user `kms_key_id_acct3_us-east-1`}}"
+      },
+      "tags": {
+        "OS": "Windows 2012 R2" 
+      },
+      "ami_regions"                 : [
+        "us-west-2",
+        "us-east-1"
+      ],
+      "source_ami_filter"           : {
+        "filters": {
+            "virtualization-type"   : "hvm",
+            "name"                  : "xxxxxxxxxxxxxx-win2012r2-base",
+            "root-device-type"      : "ebs"
+          },
+          "owners": ["xxxxxxxxxxxxxx"],
+          "most_recent": true
+      },
+      "ami_block_device_mappings"   : [
+        {
+          "device_name": "xvdb",
+          "delete_on_termination": true,
+          "encrypted": true,
+          "volume_size": 30,
+          "volume_type": "gp2"
+        },
+        {
+          "device_name": "xvdc",
+          "delete_on_termination": true,
+          "encrypted": true,
+          "volume_size": 8,
+          "volume_type": "gp2"
+        },
+        {
+              "device_name"          : "xvdd",
+              "delete_on_termination": true,
+              "encrypted"            : true,
+              "volume_size"          : 50,
+              "volume_type"          : "gp2"
+        }
+      ],
+      "encrypt_boot"                : true,
+      "skip_region_validation"      : true
+    },
+    {
+      "name"                        : "vmware",
+      "vm_name"                     : "xxxxxxxxxxxxxx-win2012r2-sysprep-v{{user `sysprep_version`}}",
+      "type"                        : "vmware-iso",
+      "headless"                    : "false",
+      "iso_url"                     : "{{ user `iso_url` }}",
+      "iso_checksum_type"           : "none",
+      "iso_checksum"                : "{{ user `iso_checksum` }}",
+      "communicator"                : "winrm",
+      "winrm_host"                  : "xxx.xxx.xxx.xxx",
+      "ssh_host"                    : "xxx.xxx.xxx.xxx",
+      "winrm_username"              : "Administrator",
+      "winrm_password"              : "hkGfVyciBIUsdSP",
+      "winrm_use_ssl"               : true,
+      "winrm_insecure"              : true,
+      "vnc_port_min"                : "5900",
+      "vnc_port_max"                : "6000",
+      "vnc_disable_password"        : true,
+      "remote_type"                 : "esx5",
+      "remote_host"                 : "xxx.xxx.xxx.xxx",
+      "remote_username"             : "{{ user `remote_esxi_username` }}",
+      "remote_password"             : "{{ user `remote_esxi_password` }}",
+      "remote_datastore"            : "{{ user `remote_esxi_datastore` }}",
+      "format"                      : "ovf",
+      "ssh_port"                    : "5986",
+      "guest_os_type"               : "windows8srv-64",
+      "output_directory"            : "xxxxxxxxxxxxxx-win2012r2-sysprep",
+      "disk_type_id"                : "thin",
+      "disk_size"                   : 122880,
+      "disk_additional_size"        : [30720,8192,51200],
+      "keep_registered"             : false,
+      "skip_export"                 : false,
+      "shutdown_command"            : "cmd.exe /c powershell c:\\windows\\temp\\cleanup.ps1 -type vmware",
+      "shutdown_timeout"            : "60m",
+      "tools_upload_flavor"         : "windows",
+      "floppy_files"                : [
+        "./scripts/answerfiles/Autounattend.xml",
+        "./scripts/powershell/vmware-init.ps1"
+      ],
+      "version"                     : "11",
+      "vmdk_name"                   : "xxxxxxxxxxxxxx-win2012r2",
+      "vmx_data"                    : {
+        "numvcpus"                  : "8",
+        "memSize"                   : "16000",
+        "scsi0.virtualDev"          : "lsisas1068",
+        "ethernet0.dvs.switchId"    : "50 1d 18 c9 65 4d e7 e5-10 06 21 15 cb 76 8c b8",
+        "ethernet0.dvs.portgroupId" : "dvportgroup-69",
+        "ethernet0.virtualdev"      : "e1000",
+        "ethernet0.startConnected"  : "true",
+        "tools.synctime"            : "false",
+        "annotation"                : "Built by Packer on epoch time {{timestamp}}"
+      },
+      "vmx_data_post"                    : {
+        "numvcpus"                  : "4",
+        "memSize"                   : "4096",
+        "ethernet0.virtualdev"      : "vmxnet3",
+        "vcpu.hotadd"               : "true",
+        "mem.hotadd"                : "true"
+      }
+    }
+  ],
+
+  "provisioners": [
+    {
+      "type":  "powershell",
+      "only": ["vmware"],
+      "script": "./scripts/powershell/firstboot.ps1",
+      "pause_before": "30s",
+      "valid_exit_codes": [0,3010,5010]
+    },
+    {
+      "type": "windows-restart",
+      "only": ["vmware"],
+      "restart_timeout": "10m"
+    },
+    {
+      "type":  "ansible",
+      "only": ["aws-acct1", "aws-acct2","aws-acct3","vmware"],
+      "pause_before": "30s",
+      "playbook_file": "./scripts/win2012r2.yaml",
+      "acct2ra_arguments": [
+        "--connection", "packer",
+        "--acct2ra-vars", "ansible_shell_type=powershell ansible_shell_executable=None"
+      ]
+    },
+    {
+      "type":  "ansible",
+      "only": ["aws-web-acct3","aws-web-acct4","aws-web-acct5"],
+      "playbook_file": "./scripts/win2012r2-web.yaml",
+      "acct2ra_arguments": [
+        "--connection", "packer",
+        "--acct2ra-vars", "ansible_shell_type=powershell ansible_shell_executable=None" 
+      ]
+    },
+    {
+      "type":  "ansible",
+      "only": ["aws-acct1","aws-acct2","aws-acct3","aws-web-acct3","aws-web-acct4","aws-web-acct5"],
+      "playbook_file": "./scripts/aws.yaml",
+      "acct2ra_arguments": [
+        "--connection", "packer",
+        "--acct2ra-vars", "ansible_shell_type=powershell ansible_shell_executable=None" 
+      ]
+    },
+    {
+      "type": "windows-restart",
+      "restart_timeout": "10m"
+    },
+    {
+      "type":  "ansible",
+      "only": ["aws-acct1", "aws-acct2","aws-web-acct4","aws-web-acct3","aws-web-acct4","aws-web-acct5","vmware"],
+      "playbook_file": "./scripts/winupdates.yaml",
+      "acct2ra_arguments": [
+        "--connection", "packer",
+        "--acct2ra-vars", "ansible_shell_type=powershell ansible_shell_executable=None" 
+      ]
+    },
+    {
+      "type": "windows-restart",
+      "restart_timeout": "20m"
+    },
+    {
+      "type":  "ansible",
+      "only": ["aws-acct1", "aws-acct2","aws-acct3","aws-web-acct3","aws-web-acct4","aws-web-acct5","vmware"],
+      "playbook_file": "./scripts/winupdates.yaml",
+      "acct2ra_arguments": [ 
+        "--connection", "packer",
+        "--acct2ra-vars", "ansible_shell_type=powershell ansible_shell_executable=None" 
+      ]
+    },
+    {
+      "type": "windows-restart",
+      "restart_timeout": "10m"
+    },
+    {
+      "type":  "ansible",
+      "only": ["aws-acct1", "aws-acct2","aws-acct3","aws-web-acct3","aws-web-acct4","aws-web-acct5","vmware"],
+      "playbook_file": "./scripts/winupdates.yaml",
+      "acct2ra_arguments": [
+
+        "--connection", "packer",
+        "--acct2ra-vars", "ansible_shell_type=powershell ansible_shell_executable=None"
+      ]
+    },
+    {
+      "type": "windows-restart",
+      "restart_timeout": "10m"
+    },
+    {
+      "type": "powershell",
+      "only": ["aws-acct1", "aws-acct2","aws-acct3","aws-web-acct3","aws-web-acct4","aws-web-acct5"],
+      "scripts": [
+        "./scripts/powershell/ec2-config.ps1"
+      ]
+    },
+    {
+      "type": "windows-shell",
+      "only": ["aws-acct1", "aws-acct2","aws-acct3"],
+       "inline": [
+         "cmd /c wmic useraccount where name='Administrator' rename xxxxxxxxxxxxxxadmin",
+         "cmd /c wmic useraccount where name='Guest' rename xxxxxxxxxxxxxxguest",
+         "cmd /c \"C:\\Program Files\\Amazon\\Ec2ConfigService\\ec2config.exe\" -sysprep"
+       ]
+    },
+    {
+      "type":  "powershell",
+      "only": ["aws-web-acct3","aws-web-acct4","aws-web-acct5"],
+      "execute_command": "{{ .Path }} -type awsweb",
+      "script": "./scripts/powershell/cleanup.ps1"
+    },
+    {
+      "type":  "ansible",
+      "only": ["vmware"],
+      "playbook_file": "./scripts/sysprepconfig.yaml",
+      "acct2ra_arguments": [
+        "--connection", "packer",
+        "--acct2ra-vars", "ansible_shell_type=powershell ansible_shell_executable=None"
+      ]
+    }
+  ],
+
+  "post-processors":  [
+    [
+      {
+        "type": "vsphere",
+        "only": ["vmware"],
+        "host": "xxxxxxx-virtualcenter.xxxxxxxxxxxxxxmgmt.xxxxxxx",
+        "username": "{{ user `vcenter_username`}}",
+        "password": "{{ user `vcenter_password`}}",
+        "datacenter": "xxxxxxx",
+        "disk_mode": "thin",
+        "cluster": "xxxxxxx-xxx-xxxxx",
+        "datastore": "xxxxxxx-xxxx-001_vSphere-Templates",
+        "vm_name": "Production-Windows-2012-R2-Beta",
+        "vm_network": "xxxxxv_xxxxxxxxxxxxxx_xxxx",
+        "vm_folder" : "Production Templates",
+        "overwrite": true,
+        "insecure": true
+      },
+      {
+        "type": "vsphere-template",
+        "only": ["vmware"],
+        "host": "xxxxxxx-virtualcenter.xxxxxxxxxxxxxxmgmt.xxxxxxx",
+        "username": "{{ user `vcenter_username`}}",
+        "password": "{{ user `vcenter_password`}}",
+        "datacenter": "xxxxxxx",
+        "folder": "/Production Templates",
+        "insecure": true
+      }
+    ],
+    [
+      {
+        "type": "vsphere",
+        "only": ["vmware"],
+        "host": "xxxxxxx-xxxx-xxxxxxx.xxxxxxxxxxxxxxmgmt.xxxxxxx",
+        "username": "{{ user `vcenter_username`}}",
+        "password": "{{ user `vcenter_password`}}",
+        "datacenter": "xxxxxxx",
+        "disk_mode": "thin",
+        "cluster": "xxxxxxx-xxxxx",
+        "datastore": "xxxxxxx-xxxxxxx",
+        "vm_name": "Production-Windows-2012-R2-Beta",
+        "vm_network": "xxxx",
+        "vm_folder" : "Production Templates",
+        "overwrite": true,
+        "insecure": true
+      },
+      {
+        "type": "vsphere-template",
+        "only": ["vmware"],
+        "host": "xxxxxxx-xxxxxxx-xxxxxxx.xxxxxxxxxxxxxxmgmt.xxxxxxx",
+        "username": "{{ user `vcenter_username`}}",
+        "password": "{{ user `vcenter_password`}}",
+        "datacenter": "xxxxxxx",
+        "folder": "/Production Templates",
+        "insecure": true
+      }
+    ],
+    [
+      {
+        "type": "vsphere",
+        "only": ["vmware"],
+        "host": "xxxxxxx-xxxxxxx-xxxxxxx.xxxxxxxxxxxxxxmgmt.xxxxxxx",
+        "username": "{{ user `vcenter_username`}}",
+        "password": "{{ user `vcenter_password`}}",
+        "datacenter": "xxxxxxx",
+        "disk_mode": "thin",
+        "cluster": "xxxxxxx-xxxx",
+        "datastore": "xxxxxxx-xxxxxxx-xxxxxx",
+        "vm_name": "Production-Windows-2012-R2-Beta",
+        "vm_network": "xxxx",
+        "vm_folder" : "Production Templates",
+        "overwrite": true,
+        "insecure": true
+      },
+      {
+        "type": "vsphere-template",
+        "only": ["vmware"],
+        "host": "xxxxxxx-xxxxx-xxxxx.xxxxxxxxxxxxxxmgmt.xxxxxxx",
+        "username": "{{ user `vcenter_username`}}",
+        "password": "{{ user `vcenter_password`}}",
+        "datacenter": "xxxxxxx",
+        "folder": "/Production Templates",
+        "insecure": true
+      }
+    ],
+    [
+      {
+        "type": "vsphere",
+        "only": ["vmware"],
+        "host": "xxxxxxx-virtualcenter.xxxxxxxxxxxxxxmgmt.xxxxxxx",
+        "username": "{{ user `vcenter_username`}}",
+        "password": "{{ user `vcenter_password`}}",
+        "datacenter": "xxxxxxx",
+        "disk_mode": "thin",
+        "cluster": "xxxxxxx-MGMT",
+        "datastore": "xxxxxxx-xxxxxxx",
+        "vm_name": "Production-Windows-2012-R2-Beta",
+        "vm_network": "xxxxxxx-xxxx-xxxxx",
+        "vm_folder" : "Production Templates",
+        "overwrite": true,
+        "insecure": true
+      },
+      {
+        "type": "vsphere-template",
+        "only": ["vmware"],
+        "host": "xxxxxxx-xxxxxxx.xxxxxxxxxxxxxxmgmt.xxxxxxx",
+        "username": "{{ user `vcenter_username`}}",
+        "password": "{{ user `vcenter_password`}}",
+        "datacenter": "xxxxxxx",
+        "folder": "/Production Templates",
+        "insecure": true
+      }
+    ],
+    [
+      {
+        "type": "vsphere",
+        "only": ["vmware"],
+        "host": "xxxxxxx-xxxxx-xxxxxx.xxxxxx.xxxxx",
+        "username": "{{ user `vcenter_username`}}",
+        "password": "{{ user `vcenter_password`}}",
+        "datacenter": "xxxxxxx",
+        "disk_mode": "thin",
+        "cluster": "xxxxxxx-xxxxx",
+        "datastore": "xxxxxxx-xxxx",
+        "vm_name": "Production-Windows-2012-R2-Beta",
+        "vm_network": "89",
+        "vm_folder" : "Production Templates",
+        "overwrite": true,
+        "insecure": true
+      },
+      {
+        "type": "vsphere-template",
+        "only": ["vmware"],
+        "host": "xxxxxxx-xxxxxx-xxxx.xxxxxxxxxxxxxxmgmt.xxxxxxx",
+        "username": "{{ user `vcenter_username`}}",
+        "password": "{{ user `vcenter_password`}}",
+        "datacenter": "xxxxxxx",
+        "folder": "/Production Templates",
+        "insecure": true
+      }
+    ],
+    [
+      {
+        "type": "vsphere",
+        "only": ["vmware"],
+        "host": "xxxxxxx-xxxxxxx-xxxxxxx.xxxxxxxxxxxxxxmgmt.xxxxxxx",
+        "username": "{{ user `vcenter_username`}}",
+        "password": "{{ user `vcenter_password`}}",
+        "datacenter": "xxxxxxx",
+        "disk_mode": "thin",
+        "cluster": "xxxxxxx-xxxxxxx",
+        "datastore": "xxxxxxx xxxxxx",
+        "vm_name": "Production-Windows-2012-R2-Beta",
+        "vm_network": "xx",
+        "vm_folder" : "Production Templates",
+        "overwrite": true,
+        "insecure": true
+      },
+      {
+        "type": "vsphere-template",
+        "only": ["vmware"],
+        "host": "xxxxxxx-xxxxxxx-xxxxxxx.xxxxxxxxxxxxxxmgmt.xxxxxxx",
+        "username": "{{ user `vcenter_username`}}",
+        "password": "{{ user `vcenter_password`}}",
+        "datacenter": "xxxxxxx",
+        "folder": "/Production Templates",
+        "insecure": true
+      }
+    ],
+    [  
+      {
+        "type": "vsphere",
+        "only": ["vmware"],
+        "host": "xxxxxxx-xxxxxxx-xxxxxxx.xxxxxxxxxxxxxxmgmt.xxxxxxx",
+        "username": "{{ user `vcenter_username`}}",
+        "password": "{{ user `vcenter_password`}}",
+        "datacenter": "xxxxxxx",
+        "disk_mode": "thin",
+        "cluster": "xxxxxxx-xxxxxxx",
+        "datastore": "xxxxxxx-xxxxxxx",
+        "vm_name": "Production-Windows-2012-R2-Beta",
+        "vm_network": "xxxx",
+        "vm_folder": "Production Templates",
+        "overwrite": true,
+        "insecure": true
+      },
+      {
+        "type": "vsphere-template",
+        "only": ["vmware"],
+        "host": "xxxxxxx-xxxxxxx-xxxxxxx.xxxxxxxxxxxxxxmgmt.xxxxxxx",
+        "username": "{{ user `vcenter_username`}}",
+        "password": "{{ user `vcenter_password`}}",
+        "datacenter": "xxxxxxx",
+        "folder": "/Production Templates",
+        "insecure": true
+      }
+    ],
+    [
+      {
+        "type": "vsphere",
+        "only": ["vmware"],
+        "host": "xxxxxxx-xxxxxxx-xxxxxxx.xxxxxxxxxxxxxxmgmt.xxxxxxx",
+        "username": "{{ user `vcenter_username`}}",
+        "password": "{{ user `vcenter_password`}}",
+        "datacenter": "xxxxxxx",
+        "disk_mode": "thin",
+        "cluster": "xxxxxxx-xxxxxxx",
+        "datastore": "xxxxxxx-xxxxxxx",
+        "vm_name": "Production-Windows-2012-R2-Beta",
+        "vm_network": "1650",
+        "vm_folder": "Production Templates",
+        "overwrite": true,
+        "insecure": true
+      },
+      {
+        "type": "vsphere-template",
+        "only": ["vmware"],
+        "host": "xxxxxxx-xxxxxxx-xxxxxxx.xxxxxxxxxxxxxxmgmt.xxxxxxx",
+        "username": "{{ user `vcenter_username`}}",
+        "password": "{{ user `vcenter_password`}}",
+        "datacenter": "xxxxxxx",
+        "folder": "/Production Templates",
+        "insecure": true
+      }
+    ]
+  ]
+}
