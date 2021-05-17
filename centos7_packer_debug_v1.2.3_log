@@ -12,10 +12,10 @@ Checking out Revision xxxxxxxxx (refs/remotes/origin/[[xxxxxxxxx-bran-name]])
  > git config core.sparsecheckout # timeout=10
  > git checkout -f xxxxxxxxx # timeout=15
 Commit message: "test without adding ami_block_device_mappings"
- > git rev-list --no-walk 8671bbb8077cccc9f740f8061f8a4a5041d01e4e # timeout=10
+ > git rev-list --no-walk 8671bbb8xxxxxxxx41d01e4e # timeout=10
 Running in Durability level: MAX_SURVIVABILITY
 [Pipeline] node
-Running on uw1-int-jks001.csodsandbox.corp in /home/jenkins-slave/workspace/Packer-Build-CentOS7
+Running on uw1-int-001.xxxxxx.corp in /home/jenkins-slave/workspace/Packer-Build-CentOS7
 [Pipeline] {
 [Pipeline] stage
 [Pipeline] { (Declarative: Checkout SCM)
@@ -50,11 +50,11 @@ Commit message: "test without adding ami_block_device_mappings"
 [Pipeline] [BETA: CentOS7-AWS-Acct3] stage
 [Pipeline] [BETA: CentOS7-AWS-Acct3] { (BETA: CentOS7-AWS-Acct3)
 [Pipeline] [BETA: CentOS7-AWS-Accnt1] node
-[BETA: CentOS7-AWS-Accnt1] Running on uw1-int-jks001.csodsandbox.corp in /home/jenkins-slave/workspace/Packer-Build-CentOS7@2
+[BETA: CentOS7-AWS-Accnt1] Running on uw1-int-1.xxxxx.corp in /home/jenkins-slave/workspace/Packer-Build-CentOS7@2
 [Pipeline] [BETA: CentOS7-AWS-Acct2] node
-[BETA: CentOS7-AWS-Acct2] Running on uw1-ext-jks001.csodcloud.corp in /home/jenkins-slave/workspace/Packer-Build-CentOS7
+[BETA: CentOS7-AWS-Acct2] Running on uw1-ext-001.xxxxxx.corp in /home/jenkins-slave/workspace/Packer-Build-CentOS7
 [Pipeline] [BETA: CentOS7-AWS-Acct3] node
-[BETA: CentOS7-AWS-Acct3] Running on uw2-il2-jks001.csodcloud.corp in /home/jenkins-slave/workspace/Packer-Build-CentOS7
+[BETA: CentOS7-AWS-Acct3] Running on uw2-il2-01.xxxx.corp in /home/jenkins-slave/workspace/Packer-Build-CentOS7
 [Pipeline] [BETA: CentOS7-AWS-Accnt1] {
 [Pipeline] [BETA: CentOS7-AWS-Acct2] {
 [Pipeline] [BETA: CentOS7-AWS-Acct3] {
@@ -118,7 +118,7 @@ Commit message: "test without adding ami_block_device_mappings"
 [BETA: CentOS7-AWS-Accnt1]  > git config core.sparsecheckout # timeout=10
 [BETA: CentOS7-AWS-Accnt1]  > git checkout -f xxxxxxxxx # timeout=15
 [BETA: CentOS7-AWS-Accnt1] Commit message: "test without adding ami_block_device_mappings"
-[BETA: CentOS7-AWS-Acct3] Notifying Stash at "https://bitbucket.csod.com"
+[BETA: CentOS7-AWS-Acct3] Notifying Stash at "https://bitbucket.xxxx.com"
 [Pipeline] [BETA: CentOS7-AWS-Accnt1] withEnv
 [Pipeline] [BETA: CentOS7-AWS-Accnt1] {
 [Pipeline] [BETA: CentOS7-AWS-Accnt1] script
