@@ -289,7 +289,7 @@ Commit message: "test without adding ami_block_device_mappings"
 [BETA: CentOS7-AWS-Acct2] 2018/10/26 08:47:56 Preparing build: aws-ext
 [BETA: CentOS7-AWS-Acct2] 2018/10/26 08:47:56 packer: 2018/10/26 08:47:56 Cannot copy AMI to AWS session region 'us-west-1', deleting it from `ami_regions`.
 [BETA: CentOS7-AWS-Acct2] 2018/10/26 08:47:56 packer: 2018/10/26 08:47:56 Config: {PackerConfig:{PackerBuildName:aws-ext PackerBuilderType:amazon-ebs PackerDebug:false PackerForce:false PackerOnError: 
-PackerUserVars:map[kms_key_id_acct2_eu-west-3:arn:aws:kms:eu-west-3:xxxxxxxxxx:key/x-x-xx-xxx-xxxx aws_subnet_id:subnet-xxxx remote_esxi_username:svc-packer kms_key_id_int_us-west-1:arn:aws:kms:us-west-1:xxxxxxxxxx:key/c91bb326-af95-4618-af51-d7d978917a04
+PackerUserVars:map[kms_key_id_acct2_eu-west-3:arn:aws:kms:eu-west-3:xxxxxxxxxx:key/x-x-xx-xxx-xxxx aws_subnet_id:subnet-xxxx remote_esxi_username:svc-packer kms_key_id_int_us-west-1:arn:aws:kms:us-west-1:xxxxxxxxxx:key/c9dxxxxx-af95-xxxx-xxxx-d7asfafafdadaa04
 remote_esxi_password: aws_secret_key: kms_key_id_acct2_us-west-1:arn:aws:kms:us-west-1:xxxxxxxxxx:key/x-xx-xx-xxx-xxx kms_key_id_acct2_eu-west-2:arn:aws:kms:eu-west-2:xxxxxxxxxx:key/x-x-x-x-x remote_esxi_datastore:xxxx-ONLY 
 vcenter_password: kms_key_id_acct2_us-east-1:arn:aws:kms:us-east-1:xxxxxxxxxx:key/xxx-xx-xx-xx-xxx vcenter_username: kms_key_id_acct2_eu-central-1:arn:aws:kms:eu-central-1:xxxxxxxxxx:key/xxx-xx-4x-9-xf496 
 version:2.xxxxxxxxxx kms_key_id_acct3_us-west-2:arn:aws:kms:us-west-2:xxxxxxxxxx:key/be91ec52-a7ed-4b6b-b8cd-d6594f71a044 aws_region:us-west-1 aws_access_key: root_pass: 
@@ -319,7 +319,7 @@ EnableEnv:false BuildName:aws-ext BuildType:amazon-ebs TemplatePath:/home/jenkin
 [BETA: CentOS7-AWS-Acct2] 2018/10/26 08:47:56 ui: Template validated successfully.
 [BETA: CentOS7-AWS-Acct2] 2018/10/26 08:47:56 [INFO] (telemetry) Finalizing.
 [BETA: CentOS7-AWS-Acct2] Template validated successfully.
-[BETA: CentOS7-AWS-Accnt1] Notifying Stash at "https://bitbucket.csod.com"
+[BETA: CentOS7-AWS-Accnt1] Notifying Stash at "https://bitbucket.xxxxx.com"
 [BETA: CentOS7-AWS-Acct3] Notified Stash for commit with id xxxxxxxxx
 [Pipeline] [BETA: CentOS7-AWS-Acct3] }
 [BETA: CentOS7-AWS-Acct2] 2018/10/26 08:47:56 waiting for all plugin processes to complete...
@@ -744,8 +744,8 @@ EnableEnv:false BuildName:aws-ext BuildType:amazon-ebs TemplatePath:/home/jenkin
 [BETA: CentOS7-AWS-Accnt1] [0;32m    aws-int: Adding tag: "Name": "Packer Builder"[0m
 [BETA: CentOS7-AWS-Accnt1] 2018/10/26 08:48:00 ui: [0;32m    aws-int: Instance ID: i-0aae8e5xxxxxxxxxxxx[0m
 [BETA: CentOS7-AWS-Accnt1] [0;32m    aws-int: Instance ID: i-0aae8e5xxxxxxxxxxxx[0m
-[BETA: CentOS7-AWS-Accnt1] [1;32m==> aws-int: Waiting for instance (i-0aae8e593a9501161) to become ready...[0m
-[BETA: CentOS7-AWS-Accnt1] 2018/10/26 08:48:00 ui: [1;32m==> aws-int: Waiting for instance (i-0aae8e593a9501161) to become ready...[0m
+[BETA: CentOS7-AWS-Accnt1] [1;32m==> aws-int: Waiting for instance (i-0aaxxxxx501161) to become ready...[0m
+[BETA: CentOS7-AWS-Accnt1] 2018/10/26 08:48:00 ui: [1;32m==> aws-int: Waiting for instance (i-0axxxxxx93a9501161) to become ready...[0m
 [BETA: CentOS7-AWS-Accnt1] 2018/10/26 08:48:15 packer: 2018/10/26 08:48:15 [INFO] Not using winrm communicator, skipping get password...
 [BETA: CentOS7-AWS-Accnt1] 2018/10/26 08:48:15 packer: 2018/10/26 08:48:15 [INFO] Waiting for SSH, up to timeout: 10m0s
 [BETA: CentOS7-AWS-Accnt1] 2018/10/26 08:48:15 ui: [1;32m==> aws-int: Waiting for SSH to become available...[0m
@@ -860,7 +860,7 @@ EnableEnv:false BuildName:aws-ext BuildType:amazon-ebs TemplatePath:/home/jenkin
 [BETA: CentOS7-AWS-Accnt1] 2018/10/26 08:49:47 ui: [0;32m    aws-int: [0;32mok: [127.0.0.1][0m[0m
 [BETA: CentOS7-AWS-Accnt1] [0;32m    aws-int:[0m
 [BETA: CentOS7-AWS-Accnt1] 2018/10/26 08:49:47 ui: [0;32m    aws-int:[0m
-[BETA: CentOS7-AWS-Accnt1] 2018/10/26 08:49:47 ui: [0;32m    aws-int: TASK [Install CSOD Standard Base Utilities] ************************************[0m
+[BETA: CentOS7-AWS-Accnt1] 2018/10/26 08:49:47 ui: [0;32m    aws-int: TASK [Install xxxxxxStandard Base Utilities] ************************************[0m
 [BETA: CentOS7-AWS-Accnt1] [0;32m    aws-int: TASK [Install CSOD Standard Base Utilities] ************************************[0m
 [BETA: CentOS7-AWS-Accnt1] 2018/10/26 08:50:33 ui: [0;32m    aws-int: [0;33mchanged: [127.0.0.1] => (item=[u'yum-utils', u'vim-enhanced', u'telnet', u'net-tools', u'traceroute', u'iotop', u'system-storage-manager', u'sysstat', u'atop', u'htop', u'iptraf-ng', u'mtr', u'wget', u'nfs-utils', u'bind-utils', u'nc', u'dbus', u'nmap', u'aide'])[0m[0m
 [BETA: CentOS7-AWS-Accnt1] [0;32m    aws-int: [0;33mchanged: [127.0.0.1] => (item=[u'yum-utils', u'vim-enhanced', u'telnet', u'net-tools', u'traceroute', u'iotop', u'system-storage-manager', u'sysstat', u'atop', u'htop', u'iptraf-ng', u'mtr', u'wget', u'nfs-utils', u'bind-utils', u'nc', u'dbus', u'nmap', u'aide'])[0m[0m
